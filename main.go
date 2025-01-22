@@ -5,11 +5,17 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
+
+	"github.com/TooCuteToo/repl-pokedex/internal"
 )
 
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	commands := getCommands()
+	config := config{
+		pokeApiClient: internal.NewClient(30 * time.Second),
+	}
 
 	for {
 		fmt.Print("Pokedex > ")
@@ -30,7 +36,7 @@ func main() {
 			continue
 		}
 
-		err := v.callBack()
+		err := v.callBack(&config)
 		if err != nil {
 			fmt.Printf("there was an error: %v", err)
 		}

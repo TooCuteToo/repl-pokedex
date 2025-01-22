@@ -3,12 +3,20 @@ package main
 import (
 	"fmt"
 	"os"
+
+	"github.com/TooCuteToo/repl-pokedex/internal"
 )
 
 type cliCommand struct {
 	name        string
 	description string
-	callBack    func() error
+	callBack    func(config *config) error
+}
+
+type config struct {
+	pokeApiClient internal.Client
+	nextUrl       *string
+	prevUrl       *string
 }
 
 func getCommands() map[string]cliCommand {
@@ -23,11 +31,21 @@ func getCommands() map[string]cliCommand {
 			description: "Display a help message",
 			callBack:    commandHelp,
 		},
+		"map": {
+			name:        "map",
+			description: "Display a current list of 20 locations",
+			callBack:    commandMap,
+		},
+		"mapb": {
+			name:        "map",
+			description: "Display a previous list of 20 locations",
+			callBack:    commandMapBack,
+		},
 	}
 	return commands
 }
 
-func commandHelp() error {
+func commandHelp(config *config) error {
 	fmt.Println("Welcome to the Pokedex!")
 	fmt.Println("Usage:")
 	fmt.Println()
@@ -37,8 +55,38 @@ func commandHelp() error {
 	return nil
 }
 
-func commandExit() error {
+func commandExit(config *config) error {
 	fmt.Println("Closing the Pokedex... Goodbye!")
 	os.Exit(0)
+	return nil
+}
+
+func commandMap(config *config) error {
+	areasRepsone, err := config.pokeApiClient.GetAreas(config.nextUrl)
+	if err != nil {
+		return err
+	}
+
+	for _, v := range areasRepsone.Results {
+		fmt.Println(v.Name)
+	}
+
+	config.nextUrl = areasRepsone.Next
+	config.prevUrl = areasRepsone.Prev
+	return nil
+}
+
+func commandMapBack(config *config) error {
+	areasRepsone, err := config.pokeApiClient.GetAreas(config.nextUrl)
+	if err != nil {
+		return err
+	}
+
+	for _, v := range areasRepsone.Results {
+		fmt.Println(v.Name)
+	}
+
+	config.nextUrl = areasRepsone.Next
+	config.prevUrl = areasRepsone.Prev
 	return nil
 }
