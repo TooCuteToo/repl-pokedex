@@ -9,6 +9,7 @@ import (
 
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
+	commands := getCommands()
 
 	for {
 		fmt.Print("Pokedex > ")
@@ -23,7 +24,16 @@ func main() {
 			loweredWords = append(loweredWords, strings.ToLower(w))
 		}
 
-		fmt.Printf("Your command was: %v\n", loweredWords[0])
+		v, ok := commands[loweredWords[0]]
+		if !ok {
+			fmt.Println("Unknown command")
+			continue
+		}
+
+		err := v.callBack()
+		if err != nil {
+			fmt.Printf("there was an error: %v", err)
+		}
 	}
 }
 
