@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/TooCuteToo/repl-pokedex/internal/pokeapi"
+	"github.com/TooCuteToo/repl-pokedex/internal/pokecache"
 )
 
 type cliCommand struct {
@@ -15,6 +16,7 @@ type cliCommand struct {
 
 type config struct {
 	pokeApiClient pokeapi.Client
+	cache         pokecache.Cache
 	nextUrl       *string
 	prevUrl       *string
 }
@@ -77,7 +79,7 @@ func commandMap(config *config) error {
 }
 
 func commandMapBack(config *config) error {
-	areasRepsone, err := config.pokeApiClient.GetAreas(config.nextUrl)
+	areasRepsone, err := config.pokeApiClient.GetAreas(config.prevUrl)
 	if err != nil {
 		return err
 	}
