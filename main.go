@@ -10,11 +10,16 @@ import (
 	"github.com/TooCuteToo/repl-pokedex/internal/pokeapi"
 )
 
+const (
+	timeout       = 30 * time.Second
+	cacheInterval = 5 * time.Minute
+)
+
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	commands := getCommands()
 	config := config{
-		pokeApiClient: pokeapi.NewClient(30 * time.Second),
+		pokeApiClient: pokeapi.NewClient(timeout, cacheInterval),
 	}
 
 	for {
