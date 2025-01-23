@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/TooCuteToo/repl-pokedex/internal"
+	"github.com/TooCuteToo/repl-pokedex/internal/pokeapi"
 )
 
 type cliCommand struct {
@@ -14,7 +14,7 @@ type cliCommand struct {
 }
 
 type config struct {
-	pokeApiClient internal.Client
+	pokeApiClient pokeapi.Client
 	nextUrl       *string
 	prevUrl       *string
 }

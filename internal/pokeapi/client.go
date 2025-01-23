@@ -1,4 +1,4 @@
-package internal
+package pokeapi
 
 import (
 	"net/http"

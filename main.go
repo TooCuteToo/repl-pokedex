@@ -7,14 +7,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/TooCuteToo/repl-pokedex/internal"
+	"github.com/TooCuteToo/repl-pokedex/internal/pokeapi"
 )
 
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	commands := getCommands()
 	config := config{
-		pokeApiClient: internal.NewClient(30 * time.Second),
+		pokeApiClient: pokeapi.NewClient(30 * time.Second),
 	}
 
 	for {
