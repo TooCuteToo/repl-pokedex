@@ -41,7 +41,12 @@ func main() {
 			continue
 		}
 
-		err := v.callBack(&config)
+		sv := ""
+		if len(loweredWords) > 1 {
+			sv = loweredWords[1]
+		}
+
+		err := v.callBack(&config, sv)
 		if err != nil {
 			fmt.Printf("there was an error: %v", err)
 		}

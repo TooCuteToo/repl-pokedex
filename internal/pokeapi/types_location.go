@@ -8,6 +8,15 @@ type LocationAreasResponse struct {
 }
 
 type LocationArea struct {
-	Name  string `json:"name"`
-	Index int    `json:"game_index"`
+	Name string `json:"name"`
+}
+
+type LocationAreaDetailResponse struct {
+	Name     string `json:"name"`
+	Index    int    `json:"game_index"`
+	Pokemons []struct {
+		Pokemon struct {
+			Name string `json:"name"`
+		}
+	} `json:"pokemon_encounters"`
 }

@@ -10,7 +10,7 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callBack    func(config *config) error
+	callBack    func(config *config, value string) error
 }
 
 type config struct {
@@ -41,11 +41,16 @@ func getCommands() map[string]cliCommand {
 			description: "Display a previous list of 20 locations",
 			callBack:    commandMapBack,
 		},
+		"explore": {
+			name:        "exlpre",
+			description: "Display a list of pokemon encounters in the location",
+			callBack:    commandExpore,
+		},
 	}
 	return commands
 }
 
-func commandHelp(config *config) error {
+func commandHelp(config *config, value string) error {
 	fmt.Println("Welcome to the Pokedex!")
 	fmt.Println("Usage:")
 	fmt.Println()
@@ -55,13 +60,13 @@ func commandHelp(config *config) error {
 	return nil
 }
 
-func commandExit(config *config) error {
+func commandExit(config *config, value string) error {
 	fmt.Println("Closing the Pokedex... Goodbye!")
 	os.Exit(0)
 	return nil
 }
 
-func commandMap(config *config) error {
+func commandMap(config *config, value string) error {
 	areasRepsone, err := config.pokeApiClient.GetAreas(config.nextUrl)
 	if err != nil {
 		return err
@@ -76,7 +81,7 @@ func commandMap(config *config) error {
 	return nil
 }
 
-func commandMapBack(config *config) error {
+func commandMapBack(config *config, value string) error {
 	areasRepsone, err := config.pokeApiClient.GetAreas(config.prevUrl)
 	if err != nil {
 		return err
@@ -88,5 +93,20 @@ func commandMapBack(config *config) error {
 
 	config.nextUrl = areasRepsone.Next
 	config.prevUrl = areasRepsone.Prev
+	return nil
+}
+
+func commandExpore(config *config, value string) error {
+	fmt.Printf("Exploring %v...\n", value)
+	areaDetailResponse, err := config.pokeApiClient.ExploreArea(value)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("Found Pokemon:")
+	for _, v := range areaDetailResponse.Pokemons {
+		fmt.Printf("- %v\n", v.Pokemon.Name)
+	}
+
 	return nil
 }
