@@ -53,6 +53,11 @@ func getCommands() map[string]cliCommand {
 			description: "Catch a pokemon based on pokemon's base experience",
 			callBack:    commandCatch,
 		},
+		"pokedex": {
+			name:        "pokedex",
+			description: "Show the list of caught pokemon",
+			callBack:    commandPokedex,
+		},
 		"inspect": {
 			name:        "inspect",
 			description: "inspect the detail information of caught pokemon",
@@ -147,6 +152,7 @@ func commandCatch(config *config, value string) error {
 	if percent >= catchPercent {
 		fmt.Printf("%v was caught!\n", value)
 		config.caughtPokemons[value] = pokemonResponse
+		fmt.Println("You may now inspect it with the inpsect command")
 		return nil
 	}
 
@@ -180,5 +186,13 @@ func commandInspect(config *config, value string) error {
 		fmt.Printf("\t-%v\n", v.Type.Name)
 	}
 
+	return nil
+}
+
+func commandPokedex(config *config, value string) error {
+	fmt.Println("Your Pokedex: ")
+	for _, v := range config.caughtPokemons {
+		fmt.Printf("\t-%v\n", v.Name)
+	}
 	return nil
 }
