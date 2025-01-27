@@ -7,7 +7,7 @@ import (
 
 type Cache struct {
 	data     map[string]cacheEntry
-	mu       sync.Mutex
+	mu       sync.RWMutex
 	interval time.Duration
 }
 

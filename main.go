@@ -19,8 +19,8 @@ func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	commands := getCommands()
 	config := config{
-		pokeApiClient: pokeapi.NewClient(timeout, cacheInterval),
-		userPokemons:  make(map[string]pokeapi.PokemonResponse),
+		pokeApiClient:  pokeapi.NewClient(timeout, cacheInterval),
+		caughtPokemons: make(map[string]pokeapi.PokemonResponse),
 	}
 
 	for {

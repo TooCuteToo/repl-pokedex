@@ -15,10 +15,10 @@ type cliCommand struct {
 }
 
 type config struct {
-	pokeApiClient pokeapi.Client
-	nextUrl       *string
-	prevUrl       *string
-	userPokemons  map[string]pokeapi.PokemonResponse
+	pokeApiClient  pokeapi.Client
+	nextUrl        *string
+	prevUrl        *string
+	caughtPokemons map[string]pokeapi.PokemonResponse
 }
 
 func getCommands() map[string]cliCommand {
@@ -50,8 +50,13 @@ func getCommands() map[string]cliCommand {
 		},
 		"catch": {
 			name:        "catch",
-			description: "Catch a pokemon",
+			description: "Catch a pokemon based on pokemon's base experience",
 			callBack:    commandCatch,
+		},
+		"inspect": {
+			name:        "inspect",
+			description: "inspect the detail information of caught pokemon",
+			callBack:    commandInspect,
 		},
 	}
 	return commands
@@ -141,10 +146,39 @@ func commandCatch(config *config, value string) error {
 
 	if percent >= catchPercent {
 		fmt.Printf("%v was caught!\n", value)
-		config.userPokemons[value] = pokemonResponse
+		config.caughtPokemons[value] = pokemonResponse
 		return nil
 	}
 
 	fmt.Printf("%v escaped!\n", value)
+	return nil
+}
+
+func commandInspect(config *config, value string) error {
+	if value == "" {
+		fmt.Println("Empty Pokemon name")
+		return nil
+	}
+
+	pokemon, ok := config.caughtPokemons[value]
+	if !ok {
+		fmt.Println("you have not caught that Pokemon")
+		return nil
+	}
+
+	fmt.Println("Name: ", pokemon.Name)
+	fmt.Println("Height: ", pokemon.Height)
+	fmt.Println("Weight: ", pokemon.Weight)
+
+	fmt.Println("Stats: ")
+	for _, v := range pokemon.Stats {
+		fmt.Printf("\t-%v: %v\n", v.Stat.Name, v.BaseStat)
+	}
+
+	fmt.Println("Types: ")
+	for _, v := range pokemon.Types {
+		fmt.Printf("\t-%v\n", v.Type.Name)
+	}
+
 	return nil
 }
