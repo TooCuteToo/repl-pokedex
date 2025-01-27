@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 
 	"github.com/TooCuteToo/repl-pokedex/internal/pokeapi"
@@ -17,6 +18,7 @@ type config struct {
 	pokeApiClient pokeapi.Client
 	nextUrl       *string
 	prevUrl       *string
+	userPokemons  map[string]pokeapi.PokemonResponse
 }
 
 func getCommands() map[string]cliCommand {
@@ -42,9 +44,14 @@ func getCommands() map[string]cliCommand {
 			callBack:    commandMapBack,
 		},
 		"explore": {
-			name:        "exlpre",
+			name:        "explore",
 			description: "Display a list of pokemon encounters in the location",
 			callBack:    commandExpore,
+		},
+		"catch": {
+			name:        "catch",
+			description: "Catch a pokemon",
+			callBack:    commandCatch,
 		},
 	}
 	return commands
@@ -108,5 +115,36 @@ func commandExpore(config *config, value string) error {
 		fmt.Printf("- %v\n", v.Pokemon.Name)
 	}
 
+	return nil
+}
+
+func commandCatch(config *config, value string) error {
+	if value == "" {
+		fmt.Println("Empty Pokemon name")
+		return nil
+	}
+
+	fmt.Printf("Throwing a Pokeball at %v...\n", value)
+	pokemonResponse, err := config.pokeApiClient.GetPokemon(value)
+	if err != nil {
+		return err
+	}
+
+	if pokemonResponse.Name == "" {
+		fmt.Println("Invalid Pokemon name")
+		return nil
+	}
+
+	rn := rand.Intn(randomRange)
+	threshold := pokemonResponse.BaseExperience / thresholdAdjust
+	percent := rn / threshold * 100
+
+	if percent >= catchPercent {
+		fmt.Printf("%v was caught!\n", value)
+		config.userPokemons[value] = pokemonResponse
+		return nil
+	}
+
+	fmt.Printf("%v escaped!\n", value)
 	return nil
 }

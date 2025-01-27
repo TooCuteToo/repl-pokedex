@@ -20,6 +20,7 @@ func main() {
 	commands := getCommands()
 	config := config{
 		pokeApiClient: pokeapi.NewClient(timeout, cacheInterval),
+		userPokemons:  make(map[string]pokeapi.PokemonResponse),
 	}
 
 	for {
